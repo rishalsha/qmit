@@ -8,9 +8,14 @@ use clap::{Args, Parser, Subcommand};
     about = "AI-powered conventional commit generator and assistant",
     long_about = "qmit inspects your staged git changes and uses AI (Gemini, ChatGPT, Claude, Ollama) \
 to generate standard, high-quality Conventional Commit messages. You can review, edit, or regenerate \
-before committing."
+before committing.",
+    disable_version_flag = true
 )]
 pub struct Cli {
+    /// Print version information
+    #[arg(short = 'v', short_alias = 'V', long = "version", action = clap::ArgAction::Version)]
+    pub version: Option<bool>,
+
     #[command(subcommand)]
     pub command: Option<Commands>,
 
