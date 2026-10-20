@@ -56,6 +56,8 @@ pub struct Cli {
 pub enum Commands {
     /// Manage qmit configuration (AI providers, API keys, models)
     Config(ConfigArgs),
+    /// Run the interactive configuration wizard
+    Setup,
 }
 
 #[derive(Args, Debug)]

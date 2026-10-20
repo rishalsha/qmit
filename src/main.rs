@@ -19,8 +19,13 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     // Handle subcommands
-    if let Some(Commands::Config(config_args)) = cli.command {
-        return handle_config_command(config_args);
+    match cli.command {
+        Some(Commands::Config(config_args)) => return handle_config_command(config_args),
+        Some(Commands::Setup) => {
+            Config::interactive_setup()?;
+            return Ok(());
+        }
+        None => {}
     }
 
     // Ensure we are inside a git repository
