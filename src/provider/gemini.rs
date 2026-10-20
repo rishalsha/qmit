@@ -16,7 +16,7 @@ impl GeminiProvider {
             model,
             base_url,
             client: Client::builder()
-                .timeout(std::time::Duration::from_secs(45))
+                .timeout(std::time::Duration::from_secs(30))
                 .build()
                 .unwrap_or_else(|_| Client::new()),
         }
@@ -55,7 +55,10 @@ impl GeminiProvider {
             ],
             "generationConfig": {
                 "temperature": 0.2,
-                "maxOutputTokens": 1000
+                "maxOutputTokens": 1000,
+                "thinkingConfig": {
+                    "thinkingBudget": 0
+                }
             }
         });
 
@@ -81,16 +84,25 @@ impl GeminiProvider {
             bail!("Gemini API returned error status {}: {}", status, resp_json);
         }
 
-        let text = resp_json
+        let parts = resp_json
             .get("candidates")
             .and_then(|c| c.get(0))
             .and_then(|c0| c0.get("content"))
             .and_then(|cnt| cnt.get("parts"))
-            .and_then(|p| p.get(0))
-            .and_then(|p0| p0.get("text"))
-            .and_then(|t| t.as_str())
-            .ok_or_else(|| anyhow::anyhow!("Gemini API did not return text in response: {}", resp_json))?;
+            .and_then(|p| p.as_array())
+            .ok_or_else(|| anyhow::anyhow!("Gemini API did not return valid candidates: {}", resp_json))?;
 
-        Ok(text.to_string())
+        let text = parts
+            .iter()
+            .filter(|part| part.get("thought").and_then(|t| t.as_bool()) != Some(true))
+            .filter_map(|part| part.get("text").and_then(|t| t.as_str()))
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        if text.trim().is_empty() {
+            bail!("Gemini API returned empty text in candidate parts: {}", resp_json);
+        }
+
+        Ok(text)
     }
 }

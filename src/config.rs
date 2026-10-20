@@ -43,7 +43,7 @@ impl Default for Config {
             provider: "gemini".to_string(),
             gemini: ProviderConfig {
                 api_key: None,
-                model: Some("gemini-2.0-flash".to_string()),
+                model: Some("gemini-2.5-flash".to_string()),
                 base_url: None,
             },
             openai: ProviderConfig {
@@ -126,7 +126,7 @@ impl Config {
                     .or_else(|_| std::env::var("GOOGLE_API_KEY"))
                     .ok();
                 (
-                    self.gemini.model.clone().unwrap_or_else(|| "gemini-2.0-flash".to_string()),
+                    self.gemini.model.clone().unwrap_or_else(|| "gemini-2.5-flash".to_string()),
                     env_key.or_else(|| self.gemini.api_key.clone()),
                     self.gemini.base_url.clone(),
                 )
@@ -221,9 +221,9 @@ impl Config {
                 }
 
                 let model_options = vec![
-                    "gemini-2.0-flash (fast, state-of-the-art)",
-                    "gemini-1.5-flash (fast, lightweight)",
-                    "gemini-1.5-pro (highly detailed)",
+                    "gemini-2.5-flash (recommended, fast & responsive)",
+                    "gemini-2.5-pro (high reasoning capability)",
+                    "gemini-3.8-flash (latest preview)",
                     "Other (type custom model name)",
                 ];
                 let chosen_model = Select::new("Select Gemini Model:", model_options)
