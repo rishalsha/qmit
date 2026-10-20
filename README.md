@@ -1,5 +1,9 @@
 # qmit 🚀
 
+[![Crates.io](https://img.shields.io/crates/v/qmit.svg)](https://crates.io/crates/qmit)
+[![Release](https://github.com/rishalsha/qmit/actions/workflows/release.yml/badge.svg)](https://github.com/rishalsha/qmit/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **qmit** (pronounced *"commit"*) is a blazing-fast, AI-powered Rust CLI tool that checks your Git diff and crafts standard, high-quality [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages.
 
 Never get stuck staring at an empty commit prompt again.
@@ -10,7 +14,7 @@ Never get stuck staring at an empty commit prompt again.
 
 - **Standard Conventional Commits**: Generates precise commit headers (`feat(scope): ...`, `fix: ...`, `refactor: ...`) and well-structured commit bodies adhering to the Conventional Commits v1.0.0 standard.
 - **Multiple AI Providers Supported**:
-  - **Google Gemini** (Gemini 2.0 Flash, 1.5 Flash, 1.5 Pro)
+  - **Google Gemini** (Gemini 2.5 Flash, 2.0 Flash, 1.5 Flash, 1.5 Pro)
   - **OpenAI / ChatGPT** (GPT-4o, GPT-4o-mini)
   - **Anthropic Claude** (Claude 3.5 Haiku, Claude 3.5 Sonnet)
   - **Ollama** (Local models like Llama 3.2, Qwen 2.5 Coder, Mistral)
@@ -34,10 +38,22 @@ Never get stuck staring at an empty commit prompt again.
 
 ## 📦 Installation
 
-### From Source (Cargo)
+### Option 1: Via Cargo (Crates.io)
 
 ```bash
-git clone https://github.com/rishal/qmit.git # or local folder
+cargo install qmit
+```
+
+### Option 2: Pre-compiled Binaries (Linux, macOS, Windows)
+
+Download pre-built standalone binaries for your OS and architecture from the [GitHub Releases](https://github.com/rishalsha/qmit/releases) page.
+
+Unpack the archive and place `qmit` in your system's `PATH` (e.g. `/usr/local/bin` or `~/.local/bin`).
+
+### Option 3: From Source
+
+```bash
+git clone https://github.com/rishalsha/qmit.git
 cd qmit
 cargo install --path .
 ```
