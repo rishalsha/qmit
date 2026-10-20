@@ -42,6 +42,15 @@ async fn main() -> Result<()> {
         println!("{}", "Staged tracked modified files (git add -u)".dimmed());
     } else if !git::has_staged_changes()? {
         if git::has_unstaged_changes()? {
+            use std::io::IsTerminal;
+            if !std::io::stdin().is_terminal() {
+                eprintln!(
+                    "{} No staged changes found to commit. Use -a/--all to stage tracked files.",
+                    "Error:".red().bold()
+                );
+                std::process::exit(1);
+            }
+
             match ui::prompt_unresponsive_stage()? {
                 Some(true) => {
                     git::stage_all().context("Failed to stage all files")?;
@@ -75,6 +84,27 @@ async fn main() -> Result<()> {
 
     // If API key is missing and provider needs one, trigger interactive setup
     if resolved.api_key.is_none() && resolved.provider_name != "ollama" {
+        use std::io::IsTerminal;
+        if !std::io::stdin().is_terminal() {
+            eprintln!(
+                "{} No API key configured for provider '{}'.",
+                "Error:".red().bold(),
+                resolved.provider_name
+            );
+            let env_name = match resolved.provider_name.as_str() {
+                "gemini" | "google" => "GEMINI_API_KEY",
+                "openai" | "chatgpt" => "OPENAI_API_KEY",
+                "anthropic" | "claude" => "ANTHROPIC_API_KEY",
+                _ => "QMIT_API_KEY",
+            };
+            eprintln!(
+                "Please run '{}' in an interactive terminal or set the {} environment variable.",
+                "qmit config setup".cyan(),
+                env_name.yellow()
+            );
+            std::process::exit(1);
+        }
+
         println!(
             "{}",
             "No API key configured for provider. Let's set it up quickly:".yellow().bold()
@@ -109,6 +139,15 @@ async fn main() -> Result<()> {
         git::execute_commit(&message, cli.amend)?;
         println!("{} Successfully committed!", "✔".green().bold());
         return Ok(());
+    }
+
+    use std::io::IsTerminal;
+    if !std::io::stdin().is_terminal() {
+        eprintln!(
+            "{} Non-interactive terminal detected. Use -y/--yes to accept automatically or -d/--dry-run to preview.",
+            "Error:".red().bold()
+        );
+        std::process::exit(1);
     }
 
     // Interactive review loop
